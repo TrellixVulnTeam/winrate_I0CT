@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+
+    <title>D3.js Sortable & Responsive Table</title>
+    <title>Doran's Lab</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="assets/styles/main.css">
+    <link rel="stylesheet" type="text/css" href="assets/styles/radnika.css">
+    <script type="text/javascript" src="static/js/mobile_navbar.js"></script>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider@0.2.1/build/d3-simple-slider.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </script>
+    <script type="text/javascript" src="static/disablescroll.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!--if !IE]><!-->
+    <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+     }
+     body { 
+       font: 14px/1.4 Georgia, Serif; 
+     }
+    #page-wrap {
+      margin: 50px;
+    }
+    p {
+     margin: 20px 0; 
+    }
+
+    /* 
+    Generic Styling, for Desktops/Laptops 
+    */
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+    }
+    /* Zebra striping */
+    tr:nth-of-type(odd) { 
+        background: #eee; 
+    }
+    th { 
+        background: blue; 
+        color: white; 
+        font-weight: bold; 
+        cursor: pointer;
+        background-repeat: no-repeat;
+        background-position: 3% center;
+    }
+    td, th { 
+        padding: 6px; 
+        border: 1px solid #ccc; 
+        text-align: left; 
+    }
+    
+   /* th.des:after {
+      content: "Ascending";
+    }
+    
+    th.aes:after {
+      content: "Descending";
+    }*/
+    
+    /* 
+    Max width before this PARTICULAR table gets nasty
+    This query will take effect for any screen smaller than 760px
+    and also iPads specifically.
+    */
+    @media 
+    only screen and (max-width: 760px),
+    (min-device-width: 768px) and (max-device-width: 1024px)  {
+    
+        /* Force table to not be like tables anymore */
+        table, thead, tbody, th, td, tr { 
+            display: block; 
+        }
+        
+        /* Hide table headers (but not display: none;, for accessibility) */
+        thead tr { 
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+        
+        tr { border: 1px solid #ccc; }
+        
+        td { 
+            border: none;
+            border-bottom: 1px solid #eee; 
+            position: relative;
+            padding-left: 50%; 
+        }
+        
+        /*td:before { 
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 45%; 
+            padding-right: 10px; 
+            white-space: nowrap;
+        }*/
+        
+        /*
+        Label the data
+        */
+        td:before {
+          content: attr(data-th) ": ";
+          font-weight: bold;
+          width: 6.5em;
+          display: inline-block;
+        }
+    }
+    
+    /* Smartphones (portrait and landscape) ----------- */
+    @media only screen
+    and (min-device-width : 320px)
+    and (max-device-width : 480px) {
+        body { 
+            padding: 0; 
+            margin: 0; 
+            width: 320px; }
+        }
+    
+    /* iPads (portrait and landscape) ----------- */
+    @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+        body { 
+            width: 495px; 
+        }
+    }
+    
+    </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h1>Sortable and responsive table</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div id="real-values"></div>
+    </div>
+    <br><br><br><br>
+    <div class="row">
+      <div id="iid-values"></div>
+    </div>
+  </div>
+    
+
+    
+    <br><br>
+    
+
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript">
+
+        var filename = "assets/crit-rates/Real_Values.csv"
+
+      d3.csv(filename, function(error, data) { // What does the data object look like
+          if (error) throw error;
+          
+          var sortAscending = true;
+          var table = d3.select('#real-values').append('table'); // Add table element
+          var titles = d3.keys(data[0]); // First row of data contains the column names
+          var headers = table.append('thead').attr("class", "table-head") 
+                           .append('tr')
+                           .selectAll('th') // Get ready to add th elements
+                           .data(titles).enter() // Enter all the titles
+                           .append('th') // Add
+                           .text(function (d) {
+                                return d;
+                            })
+                           .on('click', function (d) { // When you click a header element its a function of its contents (d)
+                               headers.attr('class', 'header');
+                               
+                               if (sortAscending) {
+                                 rows.sort(function(a, b) {
+                                  return b[d] < a[d]; 
+                                });
+                                 sortAscending = false;
+                                 this.className = 'aes';
+
+                               } 
+
+                               else {
+                                 rows.sort(function(a, b) { return b[d] > a[d]; });
+                                 sortAscending = true;
+                                 this.className = 'des';
+                               }
+                               
+                           });
+          
+          var rows = table.append('tbody').selectAll('tr')
+                       .data(data).enter()
+                       .append('tr');
+
+          rows.selectAll('td')
+            .data(function (d) {
+                return titles.map(function (k) {
+                    return { 'value': d[k], 'name': k};
+                });
+            }).enter()
+            .append('td')
+            .attr('data-th', function (d) {
+                return d.name;
+            })
+            .style("background-color", "blue")
+            .text(function (d) {
+                return d.value;
+            });
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+var filename = "assets/crit-rates/IID_Values.csv"
+
+      d3.csv(filename, function(error, data) { // What does the data object look like
+          if (error) throw error;
+          
+          var sortAscending = true;
+          var table = d3.select('#iid-values').append('table'); // Add table element
+          var titles = d3.keys(data[0]); // First row of data contains the column names
+          var headers = table.append('thead').attr("class", "table-head") 
+                           .append('tr')
+                           .selectAll('th') // Get ready to add th elements
+                           .data(titles).enter() // Enter all the titles
+                           .append('th') // Add
+                           .text(function (d) {
+                                return d;
+                            })
+                           .on('click', function (d) { // When you click a header element its a function of its contents (d)
+                               headers.attr('class', 'header');
+                               
+                               if (sortAscending) {
+                                 rows.sort(function(a, b) {
+                                  return b[d] < a[d]; 
+                                });
+                                 sortAscending = false;
+                                 this.className = 'aes';
+
+                               } 
+
+                               else {
+                                 rows.sort(function(a, b) { return b[d] > a[d]; });
+                                 sortAscending = true;
+                                 this.className = 'des';
+                               }
+                               
+                           });
+          
+          var rows = table.append('tbody').selectAll('tr')
+                       .data(data).enter()
+                       .append('tr');
+
+          rows.selectAll('td')
+            .data(function (d) {
+                return titles.map(function (k) {
+                    return { 'value': d[k], 'name': k};
+                });
+            }).enter()
+            .append('td')
+            .attr('data-th', function (d) {
+                return d.name;
+            })
+            .style("background-color", function(d) {
+              var n = d.value;
+              if (n > 1) {
+                return 'transparent';
+              }
+              else {
+                var str = 'rgba(0, 0, 150,' + String(n) + '  )';
+                return str;
+              }
+            })
+            .text(function (d) {
+                return d.value;
+            });
+      });
+
+
+
+
+
+
+
+
+
+    $( document ).ready(function() { 
+      generateTable("bronze");
+    });
+    </script>
+</body>
+
+</html>

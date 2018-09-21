@@ -1,0 +1,202 @@
+/* Uncomment to see overflow */
+/** {
+outline: 1px solid red;
+}*/
+
+/*.tools-container {
+  background-color: white;
+}
+*/
+.champ-entry-container {
+  padding-right: 5px !important;
+}
+
+.shuffle-icon {
+  cursor: pointer;
+  min-width: 40px;
+  max-width: 40px;
+}
+
+.not-bold {
+  font-family: roboto;
+}
+
+div.redteam-input-wrapper {
+  border-bottom: 2px solid #ba3f5d;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  color: #ba3f5d;
+  margin-top: 30px;
+  margin-right: -30px;
+}
+
+div.blueteam-input-wrapper {
+  border-bottom: 2px solid #496bb9;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  color: #496bb9;  
+  margin-top: 30px;
+  margin-right: -30px;
+}
+
+input.redteam {
+  background: #f8f8f8; 
+  font-family: radnika-bold; 
+  border-bottom: 0px;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  color: #ba3f5d;
+  font-size: 14px;
+}
+
+input.blueteam {
+  background: #f8f8f8; 
+  font-family: radnika-bold; 
+  border-bottom: 0px;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  color: #496bb9;
+  font-size: 14px;
+}
+
+p.red-team-title {
+  background-color: #ba3f5d;
+  text-align: center;
+  line-height: 40px;
+  margin-bottom: -30px;
+  margin-right: -20px;
+  color: #f8f8f8;
+  font-family: radnika-bold-condensed;
+  font-size: 18px;
+}
+
+p.blue-team-title {
+  background-color: #496bb9;
+  text-align: center;
+  line-height: 40px;
+  margin-bottom: -30px;
+  margin-right: -20px;
+  color: #f8f8f8;
+  font-family: radnika-bold-condensed;
+  font-size: 18px;
+}
+
+
+input:focus { 
+  outline: none;}
+
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
+}
+        .chart {
+
+        }
+
+        .main text {
+            font: 10px sans-serif;  
+        }
+
+        .axis line, .axis path {
+            shape-rendering: crispEdges;
+            stroke: black;
+            fill: none;
+        }
+
+        circle {
+            fill: steelblue;
+        }
+
+    .red-team-percentage {
+      fill: #ba3f5d;
+      font-family: radnika-bold;
+      }
+
+    .red-team-percentage-sign {
+      fill: #ba3f5d;
+      font-family: radnika-bold;
+      }
+
+      .blue-team-percentage {
+      fill: #496bb9;
+      font-family: radnika-bold;
+      }
+
+    .blue-team-percentage-sign {
+      fill: #496bb9;
+      font-family: radnika-bold;
+      }
+
+    ul#red-synergies li {
+      font-family: radnika-condensed;
+      font-size: 15px; 
+      color: #ba3f5d;
+    }
+
+    ul#red-counters li {
+      font-family: radnika-condensed;
+      font-size: 15px; 
+      color: #ba3f5d;
+    }
+
+    ul#blue-synergies li {
+      font-family: radnika-condensed;
+      font-size: 15px; 
+      color: #496bb9;
+    }
+
+    ul#blue-counters li {
+      font-family: radnika-condensed;
+      font-size: 15px; 
+      color: #496bb9;
+    }
+
+    input.redteam div.awesomplete {
+      position: relative;
+      z-index: 2;
+      float: left;
+      width: 100%;
+      margin-bottom: 0;
+  }
+  input.redteam div.awesomplete > input {
+      float: none;
+  }
+  input.redteam div.awesomplete > ul {
+      z-index: 3; /* bootstrap sets .input-group .form-control to 2 */
+  }
+
+  td.input-td-blue {
+    border-bottom: 2px solid #496bb9;
+  }
+
+  td.input-td-red {
+    border-right: 10px solid transparent;
+    border-bottom: 2px solid #ba3f5d;
+  }
+
+  .list-heading {
+    font-size: 18px;
+    font-family: radnika-bold-condensed;
+    line-height: 1.4;
+  }
+
+  span.synergy-text {
+    font-size: 13px !important;
+    font-family: radnika-condensed !important;
+  }

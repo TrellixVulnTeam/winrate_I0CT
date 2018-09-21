@@ -1,0 +1,50 @@
+.banner-and-title {
+	height: 350px;
+	background:transparent url('../mockup-assets/brand.jpg') no-repeat center center;
+}
+
+.article-sidebar-teaser-text {
+	background: #F8F8F8;
+    opacity: .75;
+    cursor: pointer;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 12px;
+    font-family: radnika-medium-condensed;
+}
+
+.dot1 {
+  height: 25px;
+  width: 25px;
+  background-color: #2376ff;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 3px;
+}
+
+.dot2 {
+  height: 25px;
+  width: 25px;
+  background-color: #88b4fc;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 3px;
+}
+
+.center {
+	text-align: center;
+}
+
+.author-box {
+
+}
+
+.meet-rest-of-team {
+  color: grey;
+
+}
+
+.meet-rest-of-team:hover {
+  color: #84b2ff;
+  text-decoration: none;
+}

@@ -1,0 +1,60 @@
+h1 {
+	font-family: radnika-black;
+	font-size: 40px;
+}
+
+h4 {
+	font-family: radnika-bold;
+	font-size: 18px;
+}
+
+h6 {
+	font-family: radnika-semibold;
+}
+
+#email-text {
+	border-bottom: 2px solid grey;
+	font-size: 20px;
+
+}
+
+#email-address {
+	margin-top: -5px;
+	font-family: radnika-medium-condensed;
+	font-size: 20px;
+}
+
+#contact-details {
+	border-right: 2px dashed grey;	
+}
+
+.twitter-timeline {
+	padding: 30px !important;
+	margin-top: -30px !important;
+}
+
+#contact-email-first {
+	color: black;
+	font-family: radnika-semibold;
+}
+
+#contact-email-first:hover {
+	color: #93bcff;
+	text-decoration: none;
+}
+
+#facebook-and-twitter {
+	margin-top: 15px;
+	font-family: radnika-medium-condensed;
+	font-size: 20px;
+}
+
+#facebook-row {
+	margin-bottom: 10px;
+}
+
+.facebook-or-twitter-text {
+	margin-left: -15px;
+	margin-top: 3px;
+	font-size: 20px;
+}

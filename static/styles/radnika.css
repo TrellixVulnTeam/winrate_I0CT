@@ -1,0 +1,51 @@
+
+
+@font-face {
+  font-family: radnika-regular;
+  src: url(../radnika-font/Radnika-Regular.otf);
+}
+
+@font-face {
+  font-family: radnika-semibold;
+  src: url(../radnika-font/Radnika-SemiBold.otf);
+}
+
+@font-face {
+  font-family: radnika-black;
+  src: url(../radnika-font/Radnika-Black.otf);
+}
+
+@font-face {
+  font-family: radnika-bold-condensed;
+  src: url(../radnika-font/Radnika-BoldCondensed.otf);
+}
+
+@font-face {
+  font-family: radnika-italic;
+  src: url(../radnika-font/Radnika-Italic.otf);
+}
+
+@font-face {
+  font-family: radnika-bold;
+  src: url(../radnika-font/Radnika-Bold.otf);
+}
+
+@font-face {
+    font-family: radnika-condensed;
+    src: url(../radnika-font/Radnika-Condensed.otf);
+}
+
+@font-face {
+    font-family: radnika-medium-condensed;
+    src: url(../radnika-font/Radnika-MediumCondensed.otf);
+}
+
+@font-face {
+    font-family: radnika-medium;
+    src: url(../radnika-font/Radnika-Medium.otf);
+}
+
+@font-face {
+    font-family: radnika-medium-italic;
+    src: url(../radnika-font/Radnika-MediumItalic.otf);
+}

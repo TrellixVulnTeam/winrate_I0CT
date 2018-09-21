@@ -1,0 +1,27 @@
+.analyst {
+	font-family: radnika-medium-condensed; 
+	font-size: 15px;
+}
+
+.analyst-description {
+	font-family: radnika-medium-condensed; 
+	font-size: 12px; 
+	margin-top: -17px; 
+	color: grey;
+}
+
+.current-student {
+	margin-bottom: -2px; 
+	font-family: radnika-condensed; 
+	font-size: 15px;
+}
+
+.alumnus {
+	margin-bottom: -2px; 
+	font-family: radnika-condensed; 
+	font-size: 15px;
+}
+
+#analysts {
+	font-size: 20px;
+}

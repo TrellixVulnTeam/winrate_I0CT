@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Unraveling Riot's Critical Strike Algorithm - Doran's Lab</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../assets/styles/main.css">
+    
+    <!-- Hamburger to X animation -->
+    <link href="/assets/styles/hamburgers.css" rel="stylesheet">
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider@0.2.1/build/d3-simple-slider.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="../assets/styles/main.js"></script>
+
+    <!--if !IE]><!-->
+    <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+     }
+     body { 
+       font: 14px/1.4 Georgia, Serif; 
+     }
+    #page-wrap {
+      margin: 50px;
+    }
+    p {
+     margin: 20px 0; 
+    }
+
+    /* 
+    Generic Styling, for Desktops/Laptops 
+    */
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+    }
+    /* Zebra striping */
+    tr:nth-of-type(odd) { 
+        background: #eee; 
+    }
+    th { 
+        background: blue; 
+        color: white; 
+        font-weight: bold; 
+        cursor: pointer;
+        background-repeat: no-repeat;
+        background-position: 3% center;
+    }
+    td, th { 
+        padding: 6px; 
+        border: 1px solid #ccc; 
+        text-align: left; 
+    }
+    
+   /* th.des:after {
+      content: "Ascending";
+    }
+    
+    th.aes:after {
+      content: "Descending";
+    }*/
+    
+    /* 
+    Max width before this PARTICULAR table gets nasty
+    This query will take effect for any screen smaller than 760px
+    and also iPads specifically.
+    */
+    @media 
+    only screen and (max-width: 760px),
+    (min-device-width: 768px) and (max-device-width: 1024px)  {
+    
+        /* Force table to not be like tables anymore */
+        table, thead, tbody, th, td, tr { 
+            display: block; 
+        }
+        
+        /* Hide table headers (but not display: none;, for accessibility) */
+        thead tr { 
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+        
+        tr { border: 1px solid #ccc; }
+        
+        td { 
+            border: none;
+            border-bottom: 1px solid #eee; 
+            position: relative;
+            padding-left: 50%; 
+        }
+        
+        /*td:before { 
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 45%; 
+            padding-right: 10px; 
+            white-space: nowrap;
+        }*/
+        
+        /*
+        Label the data
+        */
+        td:before {
+          content: attr(data-th) ": ";
+          font-weight: bold;
+          width: 6.5em;
+          display: inline-block;
+        }
+    }
+    
+    /* Smartphones (portrait and landscape) ----------- */
+    @media only screen
+    and (min-device-width : 320px)
+    and (max-device-width : 480px) {
+        body { 
+            padding: 0; 
+            margin: 0; 
+            width: 320px; }
+        }
+    
+    /* iPads (portrait and landscape) ----------- */
+    @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+        body { 
+            width: 495px; 
+        }
+    }
+    
+    </style>
+    <!--<![endif]--> -->
+</head>
+
+<body>
+    <script type="text/javascript">Window.test=[];</script>
+    <!-- Full screen (edge-to-edge) headline image -->
+    <div class="break-out fade-img" style="background-image: url(../assets/crit-strike-algorithm/crit-strike-banner.jpg)" alt="Crit Strike banner"></div>
+
+    <!-- Start body container -->
+    <div class="container">
+
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-expand-md navbar-default fixed-top navbar-light" role="navigation">
+            <div class="container nav-container">
+                <a class="navbar-brand" href="/index.html"><img src="/assets/dorans-lab-logo-type.png" alt="Doran's Lab logotype"></a>
+                    <button class="navbar-toggler collapsed hamburger hamburger--squeeze" data-toggle="collapse" data-target=".navbar-collapse" type="button">
+                        <span class="hamburger-box">
+                            <span class="hamburger-inner"></span>
+                        </span>
+                    </button>
+
+                    <!-- Hamburger to X animation -->
+                    <script>
+                      var $hamburger = $(".hamburger");
+                      $hamburger.on("click", function(e) {
+                        $hamburger.toggleClass("is-active");
+                        // Do something else, like open/close menu
+                      });
+                    </script>
+
+                <div class="navbar-collapse collapse justify-content-end">
+                    <ul class="nav navbar-nav navbar-right right">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/learn.html">Learn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/tools.html">Tools</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/about.html">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/contact.html">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- END NAVBAR -->
+
+        <!--Start of article content -->
+        <div class="row mobile-padding article-header-container">
+            <div class="col-lg-8 offset-lg-2 col-md-12 col-sm-12">
+                <h1 class="article-title">Unraveling Riot's Critical Strike Algorithm</h1>
+                <h4 class="article-pips">Nathan L. — August 21, 2018</h4>
+                <!-- Share on social media -->
+                <div class="row col-12 social-row no-margin">
+                    <div class="col-lg-1 offset-lg-5 col-3 offset-3 no-padding right">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=http://doranslab.gg/articles/crit-strike-algorithm.html" target="_blank"><img class="social-share" src="/assets/icons/facebook-black.svg" alt="Facebook Icon"></a>
+                    </div>
+                    <div class="col-lg-1 col-3 no-padding left">
+                        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" data-show-count="false"><img class="social-share" src="/assets/icons/twitter-black.svg" alt="Twitter Icon"></a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    </div>
+                </div>
+                <!-- End social media -->
+            </div>
+        </div>
+
+        <div class="row mobile-padding">
+            <div class="col-lg-9 col-md-12 col-sm-12 extra-padding-right pull-right">
+                <p class="article-copy">In League, a single action can determine the outcome of a lane, or even the game. For this reason, randomness in the game is a tricky topic. While landing a huge critical strike (crit) on your opponent can be satisfying, being the victim of a “lucky” crit can be frustrating, or worse: a random event could cause a skilled player to lose to a less-skilled player, even though the skilled player made a better play. In a casual game, the decision to include randomness might be a no-brainer, if it makes the game more fun. However, the decision to include <a class="article-link" href="https://www.youtube.com/watch?v=-9ZI9kMsvRQ">randomness in Esports</a> has the potential to make or break a pro player’s career or determine the outcome of a tournament. As a result, many game developers take measures to reduce the influence of randomness in their games. Riot themselves made such a decision in Season 1, when they decided to change how critical strikes operate.</p>
+
+                <br>
+
+                <p class="article-copy">It used to be the case that attacks were independent, meaning that each attack had the same chance to crit, regardless of prior attacks. For example, at 50% crit chance, the probability of getting two crits in a row (a “crit chain” of length two) was the same as any other combination of two outcomes. In other words, whether you just crit or not, your probability of critting on the next attack was still 50%. However, to make the probability of extreme outcomes (like double crits) less likely, Riot decided to employ an algorithm for what we call “crit smoothing,” intended to decrease the probability to crit when the previous attack was a crit, and vice versa. To quote Riot’s patch v1.0.0.109 <a class="article-link" href="http://forums.na.leagueoflegends.com/board/showthread.php?t=454375">release notes</a> in January 2011, <span class="italic">“We have changed how critical strike and dodge chance work. You will now get fewer ‘lucky’ or ‘unlucky’ streaks where you get no critical hits/dodges in a row, or a lot of them in a row. Your average chance to get a crit is the same as before though—if you have a 50% crit rate, and you make 100 attacks, you’ll still crit about 50 times.”</span></p>
+
+                <div class="visible-on-collapse">
+                	<br>
+                	<p class="sidebar-note"><span class="bold">*Editor’s note:</span> True randomness is a philosophical concept. All “random” numbers used in computers are pseudorandom, meaning they are not truly random but instead are generated in a way that is essentially indistinguishable from true randomness. With an algorithm in hand, Riot could use different sources of “randomness” to implement their algorithm, whether that source was truly random or not. Our goal in this article is not to address the philosophy of randomness but to figure out what type of algorithm Riot uses to determine the probability of a critical strike on an attack.</p>
+                </div>
+
+                <br><br>
+
+                <h3 class="article-subheader">Results: Crit Rates</h3>
+                <p class="article-copy">To our knowledge, Riot has never shared its crit smoothing algorithm—so, we decided to see if we could use data to figure it out. We spent over nine hours recording videos of sequences of attacks in the practice tool, and wrote Python scripts to read this video into sequences of 1’s and 0’s, for crits and non-crits.</p>
+
+                <br>
+
+                <p class="article-copy">What we found was truly... striking.</p>
+
+                <br><br>
+
+                <div class="photo-container">
+                    <img class="article-photo fade-img fancybox" src="/assets/crit-strike-algorithm/fixto600-rates.png" alt="Critical strike rates plot">
+                    <p class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-12 col-12 caption">On the x-axis is the crit chance Riot says you have. On the y-axis is the crit chance we actually observe. The three colored curves show the rates for (1) all attacks together, (2) attacks that happened after a crit, and (3) attacks that happened after a non-crit. In grey, we show the line y=x, which is what you’d expect to see for all three curves if there was no crit smoothing at all.</p>
+                </div>
+
+                <br>
+
+                <p class="article-copy">The graph above shows the observed crit rate (the percentage of attacks we observed in the video that crit) for different values of in-game displayed crit chance, which we call “nominal crit chance.” (We chose this term to make it extra clear that in-game displayed crit chance is not the same as your actual crit chance is for a specific attack.) The three colored curves show the observed rate for three kinds of attacks: attacks that happened after a crit, attacks that happened after a non-crit, and all attacks.</p>
+
+                <br>
+
+                <p class="article-copy">What you see in this plot is pretty amazing—it says that for (nominal) crit chances under 50%, Riot applies crit smoothing like we expected: you are less likely to crit again after you crit once. However, above 50%, Riot does the opposite of smoothing. At high crit chances, crits become more likely after crits, and non-crits become more likely after non-crits. This means streaks are even more common than if Riot did not modify crit chances.</p>
+
+                <br>
+
+                <p class="article-copy">Looking at the plot above, you can see that at 10% crit chance from items (nominal crit chance), an attack after a crit has only a 4% chance to crit again, as shown by the green line. This is less than half the nominal crit chance! The overall crit chance (orange line) fluctuates slightly from x=y (the grey dashed line) which is what the overall crit rates would be if attacks were independent. Initially, we believed that after a crit the chance of a crit on the next attack would drop and after a non-crit it would increase, according to Riot’s patch notes.  At low crit rates, crit smoothing occurs as expected. However, we see the reverse starting at around 50% until 80%. This indicates that after you get a crit, on average you are more likely to crit again. For a closer look at these values, the table below contains the overall crit chance and crit or non-crit chains of up to two attacks for various nominal crit values available as of patch 8.14.</p>
+
+                <br>
+
+                <select onchange="generateTable(this.value);">
+                    <option value="observed">Observed</option>
+                    <option value="theoretical">Theoretical</option>
+                </select>
+                <!-- Interactive table START -->
+                <div class="crit-table-container">
+                    <div class="row col-12">
+                      <div id="real-values"></div>
+                    </div>
+
+                    <br>
+
+                    <div class="row col-12">
+                      <div id="iid-values"></div>
+                    </div>
+                 </div>
+
+                 <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+                 <script type="text/javascript">
+
+                    function generateTable(whichTable){
+                    if (whichTable == "observed") {
+                        d3.selectAll("#real-values table").remove();
+
+                       d3.csv("../assets/crit-rates/observed.csv", function(error, data) { // What does the data object look like
+                           if (error) throw error;
+                           
+                           var sortAscending = true;
+                           var table = d3.select('#real-values').append('table'); // Add table element
+                           var titles = d3.keys(data[0]); // First row of data contains the column names
+                           var headers = table.append('thead').attr("class", "table-head") 
+                                            .append('tr')
+                                            .selectAll('th') // Get ready to add th elements
+                                            .data(titles).enter() // Enter all the titles
+                                            .append('th') // Add
+                                            .text(function (d) {
+                                                 return d;
+                                             })
+                                            .on('click', function (d) { // When you click a header element its a function of its contents (d)
+                                                headers.attr('class', 'header');
+                                                
+                                                if (sortAscending) {
+                                                  rows.sort(function(a, b) {
+                                                   return b[d] < a[d]; 
+                                                 });
+                                                  sortAscending = false;
+                                                  this.className = 'aes';
+
+                                                } 
+
+                                                else {
+                                                  rows.sort(function(a, b) { return b[d] > a[d]; });
+                                                  sortAscending = true;
+                                                  this.className = 'des';
+                                                }
+                                                
+                                            });
+                           
+                           var rows = table.append('tbody').selectAll('tr')
+                                        .data(data).enter()
+                                        .append('tr');
+
+                           rows.selectAll('td')
+                             .data(function (d) {
+                                 return titles.map(function (k) {
+                                    var valueDisplayed = d[k].split("_")[0];
+                                    var scaledColor = d[k].split("_")[1];
+                                     return { 'value': valueDisplayed, 'name': k, 'scaledColor': scaledColor};
+                                 });
+                             }).enter()
+                             .append('td')
+                             .attr('data-th', function (d) {
+                                 return d.name;
+                             })
+                             .style("background-color", function(d) {
+                                return d.scaledColor;
+                                })
+                             .text(function (d) {
+                                 return d.value;
+                             });
+                       });
+                   }
+
+                   if (whichTable == "theoretical") {
+                        d3.selectAll("#real-values table").remove();
+
+                       d3.csv("../assets/crit-rates/theoretical.csv", function(error, data) { // What does the data object look like
+                           if (error) throw error;
+                           
+                           var sortAscending = true;
+                           var table = d3.select('#real-values').append('table'); // Add table element
+                           var titles = d3.keys(data[0]); // First row of data contains the column names
+                           var headers = table.append('thead').attr("class", "table-head") 
+                                            .append('tr')
+                                            .selectAll('th') // Get ready to add th elements
+                                            .data(titles).enter() // Enter all the titles
+                                            .append('th') // Add
+                                            .text(function (d) {
+                                                 return d;
+                                             })
+                                            .on('click', function (d) { // When you click a header element its a function of its contents (d)
+                                                headers.attr('class', 'header');
+                                                
+                                                if (sortAscending) {
+                                                  rows.sort(function(a, b) {
+                                                   return b[d] < a[d]; 
+                                                 });
+                                                  sortAscending = false;
+                                                  this.className = 'aes';
+
+                                                } 
+
+                                                else {
+                                                  rows.sort(function(a, b) { return b[d] > a[d]; });
+                                                  sortAscending = true;
+                                                  this.className = 'des';
+                                                }
+                                                
+                                            });
+                           
+                           var rows = table.append('tbody').selectAll('tr')
+                                        .data(data).enter()
+                                        .append('tr');
+
+                           rows.selectAll('td')
+                             .data(function (d) {
+                                 return titles.map(function (k) {
+                                     return { 'value': d[k], 'name': k};
+                                 });
+                             }).enter()
+                             .append('td')
+                             .attr('data-th', function (d) {
+                                 return d.name;
+                             })
+                             .text(function (d) {
+                                 return d.value;
+                             });
+                       });
+                   }
+               }
+
+            $( document ).ready(function() {
+                generateTable("observed");
+            })
+
+                 </script>
+                 <!-- Interactive table END -->
+
+                <br>
+
+                <p class="article-copy">Looking at the table, we see that even on the third attack the values continue following the general trend of rising or falling that happened with the second attack. For example, we see that at 60% nominal crit chance a crit occurs more often after another crit, reaching an observed crit chance of 67.8% following a crit. Then, the chance to crit a third time is even higher, at 68.1%!</p>
+
+                <br><br>
+
+                <h3 class="article-subheader">Data Processing</h3>
+                <p class="article-copy">All of the above analyses were based on data gathered by reading the pixel values in over nine hours of practice game footage. In order to calculate the percentages, we gathered a large number of attacks across different crit chances by recording videos in the practice tool. After the video was recorded we wrote a Python program to detect crits and non-crits for us. We needed to write code that would take a video and use the RGB values to return a list of 1s and 0s corresponding to crits and non-crits. This alone was a challenge, but the task didn’t end there: we had to come up with a way to ensure that the 1s and 0s returned by the code were correct. Otherwise, we couldn’t be sure that the data it returned was meaningful.</p>
+
+                <br>
+
+                <div class="photo-container">
+                    <img class="col-lg-4 offset-lg-4 col-md-4 offset-md-4 col-sm-6 offset-sm-3 col-8 offset-2 article-photo fade-img fancybox" src="/assets/crit-strike-algorithm/non-crittle.jpg" alt="Non-crit">
+                    <p class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-12 col-12 caption">This is the region of the screen our program used to detect crits or non-crits.</p>
+                </div>
+
+                <br>
+
+                <p class="article-copy">The problem of detecting crits by analyzing video seemed daunting, so we tried to simplify our data as much as possible before diving into crit detection. First, we treated the video as a sequence of still images (frames), so we only had to process one frame at a time. We also picked a small region of the screen that contained most of the action for crits (shown above), so we could ignore the rest of the screen. Then, we made one more big simplification: instead of treating each pixel separately and using its specific RGB (red, green, blue) values, we took the average of all pixels in the region to get an overall average RGB value for the entire frame. This way, instead of having to analyze an entire image, we just had to analyze three numbers: average red, average green, and average blue. These numbers for a short segment of video are shown in the plot below.</p>
+
+                <br>
+
+                <div class="photo-container">
+                    <img class="article-photo fade-img fancybox" src="/assets/crit-strike-algorithm/fixto60-raw.jpg" alt="">
+                    <p class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-12 col-12 caption">These are the average RGB values of our video across a few hundred frames.</p>
+                </div>
+
+                <br>
+
+                <p class="article-copy">This plot is encouraging, because there are clear spikes in RGB values that correspond to crit attacks and non-crit attacks. This means that our choice to ignore most of the video data and only look at average RGB for each frame is probably going to work out!</p>
+
+                <br>
+
+                <p class="article-copy">Next, in order to be able to process this data more reliably (and for it to be more visually intuitive) we modified the RGB values by multiplying and shifting them by different amounts. The purpose of this was to change the values so that it would become easy to define a few simple rules for determining when an attack was a crit or not. An example of a simple rule would be “if blue goes over 300, then we say that a crit attack just started.”</p>
+
+                <br>
+
+                <div class="photo-container">
+                    <img class="article-photo fade-img fancybox" src="/assets/crit-strike-algorithm/fixto600-mod.jpg" alt="">
+                    <p class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-12 col-12 caption">These are RGB values used to determine crits. The x-axis represents the frames at which they occurred and the y-axis represents the modified RGB values. Each line represents a modified RGB or the average (in black).</p>
+                </div>
+
+                <br>
+
+                <p class="article-copy">By comparing the videos to these graphs, we determined that they can be read as follows: a large spike in blue and red is a non-crit (0), while a decrease in blue with a subsequent minor spike in red is a crit (1). While a human can easily pick out patterns and tell what happened, it’s a tricky challenge to write instructions to a computers to do the same thing. To verify that our program was accurate and that we would not have to do a lot of manual inspection of the crit values it detected, we went through a lot of tests and thought about ways to reduce the amount of manual checking of videos that we’d have to do. Our final iteration of code read the RGB values of a portion of the screen and determined whether each frame of video was a crit, non-crit, or in between attacks.</p>
+
+                <br>
+
+                <p class="article-copy">It turns out, even this seemingly simple task came with many challenges.</p>
+
+                <br>
+
+                <p class="article-copy">There were two types of errors we focused on detecting: (i) not recognizing that an attack occured at all (“skipping”) and (ii) reading two attacks in a short time span, when in fact only one attack happened. We could not say that each attack happened after a set number of frames because it was not possible to keep the same attack speed across multiple crit chances, due to the differences in items required to obtain different crit chances. This was difficult to solve and required us to check the number of frames between attacks. (Our videos were recorded at 30 frames per second.) If the number of frames between attacks were too high or too low we flagged it as a potential error. As these were possible sources of error, we had our code print the values for us, and saved them to an error folder where we could manually inspect them and determine whether they were correct or not. With around 25 potential errors per video, someone could manually inspect the graphs for whether it was truly an error or not. The most common potential errors that we flagged were instances where the person recording the video had to move so they would not be kicked by the League client for being AFK. As we improved our algorithm for detecting crits, the number of potential errors became smaller and smaller. For our final algorithm, we found no true errors flagged.</p>
+
+                <br>
+
+                 <div class="photo-container">
+                    <img class="article-photo fade-img fancybox" src="/assets/crit-strike-algorithm/fixto600-long.jpg" alt="">
+                    <p class="col-lg-10 offset-lg-1 col-md-10 offset-md-1 col-sm-12 col-12 caption">In the image above, you see a point where someone had to move slightly (between frames 40121 and 40176) so they would not be kicked from the game.</p>
+                </div>
+
+                <br><br>
+
+                <h3 class="article-subheader">Limitations and Future Work</h3>
+                <p class="article-copy">While there is a lot that can be learned from our data, we’d like to acknowledge several limitations of our work.</p>
+
+                <br>
+
+                <ol>
+                    <li class="article-copy bullet-list">The data that we gathered was in the practice tool only, which means it may not be relevant to other game modes. We think it would be odd for Riot to implement a different algorithm in different game modes, but if they did, our results would be limited to the practice tool environment.</li>
+                    <li class="article-copy bullet-list">It’s possible that Riot’s algorithm incorporates time between attacks or target switching, when a player changes the champion they are attacking. We did not account for this, and did not collect any data that involved switching targets.</li>
+                    <li class="article-copy bullet-list">Certain champions and items like Tryndamere and Stormrazor have effects that modify nominal crit chance, which means that any potential crit smoothing algorithm would have to account for varying crit chances. We did not consider these cases.</li>
+                    <li class="article-copy bullet-list">Because gathering data was so time consuming, we decided to record data only at 10% intervals of nominal crit chance. We did not record data for the following obtainable crit chances: 15%, 25%, 45%, 55%, 75%, 85%. If Riot’s crit algorithm is meaningfully different for these values, then our analysis missed that.</li>
+                </ol>
+
+                <p class="article-copy">We think that a look at target switching would be an exciting next step, since it has significant implications for League players. If we did this, we’d also want to take into consideration time between attacks.</p>
+
+                <br>
+
+                <p class="article-copy">Alternatively: using a bit more math, there are many interesting methods we could use to try to understand our sequences of crits and how they relate to the probability of a critical strike. Essentially, all of this work involves modeling the probability of a crit given the history of crits so far, or—in the notation of probability theory, Pr(next attack is a crit | history of events), where “Pr” is short for “probability” and “|” means “given.” The current analysis only sought to understand values like Pr(next attack is a crit | the last attack was a crit) and Pr(next attack is a crit | the last attack was not a crit). However, there are other things we could study, such as Pr(next attack is a crit | k out of the last n attacks were crits), or Pr(next attack is a crit | proportion p of attacks so far have been crits).</p>
+
+                <br>
+
+                <h3 class="article-subheader">Available Data</h3>
+                <p class="article-copy">Finally, if you feel we missed something or you want to try your own hand at this analysis, we’ve made the data available. The videos will be uploaded to <a class="article-link" href="https://www.youtube.com/watch?v=coD_zrRwEFk&list=PLoetGaSGEUIF3DZ478iAw4vdFNz36pbr-">Youtube</a> and any other information used in the analysis is available <a class="article-link" href="#">here</a>. We’d love to see what you can come up with. Tweet at us with your result!</p>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 side-bar d-none d-md-none d-sm-none d-lg-block">
+                <div class="col-12 no-padding-right">
+                	<br><br><br><br><br>
+                    <p class="sidebar-note"><span class="bold">*Editor’s note:</span> True randomness is a philosophical concept. All “random” numbers used in computers are pseudorandom, meaning they are not truly random but instead are generated in a way that is essentially indistinguishable from true randomness. With an algorithm in hand, Riot could use different sources of “randomness” to implement their algorithm, whether that source was truly random or not. Our goal in this article is not to address the philosophy of randomness but to figure out what type of algorithm Riot uses to determine the probability of a critical strike on an attack.</p>
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+
+        <div class="row extra-margin-top col-lg-4 col-md-6 col-sm-12 mobile-padding mobile-author">
+            <div class="col-lg-4 col-md-4 col-sm-3 col-3 no-padding-right no-padding-left">
+                <img class="article-circle-photo" src="/assets/people/arcade-hecarim.jpg" alt="Arcade Hecarim">
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-6 col-9 mobile-author">
+                <h6 class="article-author">Nathan Langley</h6>
+                <p class="article-author-blurb">Nathan Langley is an undergraduate at North Carolina State University. In his free time, he enjoys playing League of Legends.</p>
+                <a href="/about.html" class="inlink"><p class="meet-rest-of-team-inlink">→ Meet the rest of the team!</p></a>
+            </div>
+        </div>
+
+        <!-- Download data -->
+        <div class="row extra-margin-top col-lg-8 col-md-10 col-sm-12 download-data-box">
+            <div class="col-12 data-blurb">
+                <h6 class="data-blurb-header">Join in on the fun!</h6>
+                <p class="data-blurb-info no-margin">Interested in seeing the raw data used in this article? Inspired to develop some analytical insights of your very own? No problem: here at Doran's Lab, we strive to keep our process transparent and accessible. So, jump in; if we like what we see, we just may feature it on our site!</p>
+            </div>
+            <div class="col-12 right">
+                <a href="#" class="btn data-button">Download the raw data</a>
+            </div>            
+        </div>
+    <!-- Close body container -->
+    </div>
+    <!-- End of article content -->
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-sm-5">
+                    <p class="footer-header">Don't sue us</p>
+                    <p class="footer-disclaimer">Doran's Lab isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends or Riot Games are trademarks or registered trademarks of Riot Games, Inc. Copyright Riot Games, Inc.</p>
+                    <p class="copyright">Copyright 2018 <a class="outlink" href="http://www.laber-labs.com/"><u>Laber Labs</u></a></p>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-3">
+                    <p class="footer-header">Contact us</p>
+                    <!-- <a href="mailto:doranslab.gg@gmail.com"><p class="outlink mail-to">doranslab.gg@gmail.com</p></a>
+                    <a href="mailto:doranslab.director@gmail.com"><p class="outlink mail-to">doranslab.director@gmail.com</p></a> -->
+                    <a href="https://www.facebook.com/DoransLab/"><img class="social-icon" src="/assets/icons/facebook-black.svg" alt="Facebook icon"></a>
+                    <a href="https://twitter.com/doranslab"><img class="social-icon" src="/assets/icons/twitter-black.svg" alt="Twitter icon"></a>
+                </div>
+                <div class="col-lg-2 offset-lg-3 col-md-3 col-sm-4 footer-right">
+                    <img class="footer-logo" src="/assets/icons/footer-logo.png" alt="Doran's Lab icon">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
