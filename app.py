@@ -6,8 +6,8 @@ app = Flask(__name__, static_folder='static')
 def index():
 	return render_template("winrate.html")
 
-@app.route("/aram", methods=["GET"])
-def aram():
+@app.route("/mobile", methods=["GET"])
+def mobile():
 	return render_template("winrate-mobile.html")
 
 
