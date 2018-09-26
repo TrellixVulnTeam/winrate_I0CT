@@ -1,0 +1,93 @@
+ 
+  /*This is grey box that goes around the fun fact ("Generic text for Lisa") and the legends*/
+  .legend-and-fun-fact-wrapper {
+    border: 1px solid #a19da8; 
+    border-radius: 7px; 
+    background-color: #f8f8f8
+  }
+  /*"Show confidence intervals", "Show sample size", "Mouseover on Bronze-Gold Tier"*/
+  p.radio-labels {
+    font-family: radnika-semibold;
+    margin-left: -20px;
+  }
+
+  /*IWR, Minutes and Games Remaining text labels */
+  .axis-labels {
+    font-family: radnika-bold;
+    font-size: 18px;
+  }
+
+  /*Lower legend box that says "games remaining"*/
+  p.games-remaining-legend-text {
+    font-family: radnika-medium;
+    font-size: 10px;
+    text-align: right;
+  }
+
+  /*Top legend box text with the blue and orange keys*/
+  p.winrate-legend-text {
+    font-family: radnika-medium;
+    font-size: 10px;
+    text-align: right;
+  }
+
+  /*Change the color of the champion select arrows*/
+  polygon.champ-select-arrows {
+    stroke:purple;
+    stroke-width:1;
+  }
+
+  /*Change the margins of these to move them around to the right place*/
+  polygon#left-arrow {}
+  polygon#right-arrow {}
+  
+  /*Change the margins to add/remove space between the champ select box and the graph*/
+  div.content-wrapper {
+    margin-top: 12px;    
+  }
+
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: #6F257F;
+  stroke-width: 5px;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.focus circle {
+  fill: none;
+  stroke: steelblue;
+}
+
+input.current-champion {
+  background: #f8f8f8; 
+  font-family: radnika-bold; 
+  border-bottom: 0px;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  color: black;
+  font-size: 24px;
+  border: 1px solid grey;
+  border-radius: 8px;
+}
+

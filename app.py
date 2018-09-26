@@ -4,11 +4,11 @@ app = Flask(__name__, static_folder='static')
 
 @app.route("/", methods=["GET"])
 def index():
-	return render_template("new.html")
+	return render_template("winrate.html")
 
 @app.route("/aram", methods=["GET"])
 def aram():
-	return render_template("aram-win-predictor.html")
+	return render_template("winrate-mobile.html")
 
 
 if __name__ == "__main__":

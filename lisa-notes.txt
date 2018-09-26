@@ -1,0 +1,13 @@
+The way I have written things should be re-usable. There's only a few things you need to change.
+
+1) You need to tell the .html document where winrate.js lives
+	Make a <div id="content"></div>
+	At the end of <body> so right before </body>, add this line
+		<script type="text/javascript" src="path/to/winrate.js">></script>
+	
+2) You need to tell winrate.js where the data lives. Lines 1-15 at the very top of winrate.js explain this. 
+
+3) The stylesheet is called winrate.css. You'll tell the html document where this lives too.
+	<link rel="stylesheet" type="text/css" href="path/to/winrate.css">
+
+4) I used bootstrap for the rows and columns. Look at my rows and columns and you'll see how I've laid it out. As long as you have winrate.js and winrate.css linked, you should be able to move these around to wherever you want. 

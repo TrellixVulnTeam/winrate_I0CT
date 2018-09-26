@@ -1,340 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>An ARAM Win Predictor That Explains Itself</title>
-  <script src="static/d3.v5.min.js"></script>
-  <script src="static/d3-interpolate.v1.min.js"></script>
-  <script src="static/awesomplete.js"></script>
-  <link rel="stylesheet" href="static/awesomplete.css">
-  <link rel="stylesheet" href="static/styles/main.css">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="static/styles/aram-win-predictor.css">
-  <link rel="stylesheet" href="static/bootstrap/css/bootstrap.css" crossorigin="anonymous">
+// Dear Lisa, these are the things you'll need to change when you want to put this on doranslab.gg
 
-  <script src="static/jquery/jquery-3.3.1.js"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> -->
-  <script src="static/bootstrap/js/bootstrap.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-</head>
-<style>
+var WHERE_IWR_w_CSV_LIVES = "static/IWR_w_CI.csv";
 
-body {
-  font: 10px sans-serif;
-}
+var width = 350;
+var height = 220;
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
+var margin = {
+    'top': 5,
+    'right': 60,
+    'bottom': 60,
+    'left': 60
+};
 
-.x.axis path {
-  display: none;
-}
+// Okay, the rest of this is code
 
-.line {
-  fill: none;
-  stroke: #6F257F;
-  stroke-width: 5px;
-}
-
-.overlay {
-  fill: none;
-  pointer-events: all;
-}
-
-.focus circle {
-  fill: none;
-  stroke: steelblue;
-}
-
-input.current-champion {
-  background: #f8f8f8; 
-  font-family: radnika-bold; 
-  border-bottom: 0px;
-  border-top: 0px;
-  border-left: 0px;
-  border-right: 0px;
-  color: black;
-  font-size: 24px;
-  border: 1px solid grey;
-  border-radius: 8px;
-}
-
-
-</style>
-<body>
-  <div class="container">
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-md navbar-default fixed-top navbar-light" role="navigation">
-      <div class="container nav-container">
-        <a class="navbar-brand" href="/index.html"><img src="static/logo.png" alt="Doran's Lab logotype"></a>
-        <button class="navbar-toggler collapsed hamburger hamburger--squeeze" data-toggle="collapse" data-target=".navbar-collapse" type="button">
-          <span class="hamburger-box">
-            <span class="hamburger-inner"></span>
-          </span>
-        </button>
-
-        <!-- Hamburger to X animation -->
-        <script>
-          var $hamburger = $(".hamburger");
-          $hamburger.on("click", function(e) {
-            $hamburger.toggleClass("is-active");
-            // Do something else, like open/close menu
-          });
-        </script>
-
-        <div class="navbar-collapse collapse justify-content-end">
-          <ul class="nav navbar-nav navbar-right right">
-            <li class="nav-item">
-              <a class="nav-link" href="/learn.html">Learn</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/tools.html">Tools</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/about.html">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/contact.html">Contact</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-
-    <!-- END NAVBAR -->
-    <br><br><br><br>
-    <div class="row">
-      <div class="col-12">
-        <h1 class="article-title">Winrate of Games Remaining</h1>
-        <br>
-        <h4 class="side-info center">Interactive Module that Allows Users to pull up plots for different champions and toggle two other curves over time</h4>
-        <br>
-        <div style="display: flex; justify-content: center;"><button>Read companion article</button></div>
-      </div>
-    </div>
-    <br><br>
-
-
-
-    <div class="row">
-      <div class="col-9">
-        <div id="champ-switcher">
-          <div class="row">
-            <div class="col-5"></div>
-            <div class="col-3" style="text-align: center;">
-              <p style="float: center;">Select a champion</p>
-            </div>
-            <div class="col-4"></div>
-          </div>
-
-          <div class="row">
-            <div class="col-3"></div>
-            <div class="col-1">
-              <!-- <button onclick="previousChampion();" style="float: right;"><p>Hey</p></button> -->
-              <svg width="18" height="18" style="float: right; margin-right: -18px;">
-                <g>
-                  <polygon points="18,0 18,18 0,9" class="champ-select-arrows" onclick="previousChampion();"/>
-                  <rect class="btn" x="0" y="0" width="18" height="18" onclick="previousChampion();" style="fill: rgba(0,0,0,0);"></rect>
-                </g>
-              </svg>
-            </div>
-            <div class="col-4">
-              <input id="myinput" class="current-champion" value="Aatrox" style="text-align: center; float: center;"/>
-            </div>
-            <div class="col-1">
-              <svg width="18" height="18" style="float: right; margin-right: 18px;">
-                <g>
-                  <polygon points="0,0 0,18 18,9" class="champ-select-arrows" onclick="previousChampion();"/>
-                  <rect class="btn" x="0" y="0" width="18" height="18" onclick="nextChampion();" style="fill: rgba(0,0,0,0);"></rect>
-                </g>
-              </svg>
-            </div>
-            <div class="col-3"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-3"></div>
-    </div>
-
-
-
-
-    <div class="row">
-      <div class="col-9 content-wrapper">
-        <div id="content"></div>
-      </div>
-      <div class="col-3">
-        <div class="row">
-          <div class="col-12">
-            <div class="legend-and-fun-fact-wrapper" style="margin-top: 8px; height: 80px;">
-              <p id="fun-fact" style="padding: 15px; font-family: radnika-semibold; margin-bottom: -1px;">Generic text for Lisa</p>
-            </div>
-          </div>
-        </div>
-
-        <br><br><br><br><br>
-
-        <div class="row">
-          <div class="col-2">
-            <div class="checkbox">
-              <svg width="18" height="18">
-                <g>
-                  <rect id="confidence-interval-checkbox" class="btn" x="0" y="0" width="18" height="18" onclick="updateConfidenceIntervals();" style="fill: rgba(150,0,150,.3);"></rect>
-                </g>
-              </svg>
-            </div>
-          </div>
-          <div class="col-10">
-            <p class="radio-labels">Show confidence intervals</p>
-          </div>
-      </div>
-
-
-      <div class="row">
-          <div class="col-2">
-          <div class="checkbox">
-            <svg width="18" height="18">
-              <g>
-                <rect id="sample-size-checkbox" class="btn" x="0" y="0" width="18" height="18" onclick="updateSampleSize();" style="fill: rgba(150,0,150,.3);"></rect>
-              </g>
-            </svg>
-          </div>
-        </div>
-        <div class="col-10">
-          <p class="radio-labels">Show sample size</p>
-        </div>
-      </div>
-
-      <div class="row">
-          <div class="col-2">
-          <div class="checkbox">
-            <svg width="18" height="18">
-              <g>
-                <rect id="which-tier-to-toggle-mouseover" class="btn" x="0" y="0" width="18" height="18" onclick="toggleMouseoverTier();" style="fill: rgba(150,0,150,.3);"></rect>
-              </g>
-            </svg>
-          </div>
-        </div>
-        <div class="col-10">
-          <p class="radio-labels">Mouseover on Bronze-Gold Tier</p>
-        </div>
-      </div>
-
-
-
-      <br><br><br><br><br>
-
-      <div class="row">
-        <div class="col-12">
-          <div class="legend-and-fun-fact-wrapper">
-            <div class="row" style="padding-top: 17px;">
-              <div class="col-6"><p class="winrate-legend-text">Bronze - Gold</p></div>
-              <div class="col-6"><div id="bronzegoldbox"></div></div>
-            </div>
-            <div class="row">
-              <div class="col-6"><p class="winrate-legend-text">Platinum +</p></div>
-              <div class="col-6"><div id="platniumbox"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <br><br>
-
-
-      <div class="row">
-        <div class="col-12">
-          <div class="legend-and-fun-fact-wrapper">
-            <div class="row">
-              <div class="col-12">
-                <p style="text-align: center;">Games remaining</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6"><p class="games-remaining-legend-text">Bronze - Gold</p></div>
-              <div class="col-6"><div id="gamesremainingbronzegold"></div></div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                <div class="row">
-                  <div class="col-6"><p class="games-remaining-legend-text">Platinum +</p></div>
-                  <div class="col-6"><div id="gamesremainingplatnium"></div></div>
-                </div>
-              </div>
-            </div>
-          </div>    
-        </div>
-      </div>
-
-
-
-
-
-      </div>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class="row">
-
-      <div class="col-9">
-        
-        <br><br>
-      </div>
-
-      <div class="col-3">
-        <br>
-        <br>
-
-
-        
-
-
-
-
-
-        <br><br>
-
-        
-
-
-        <br>
-    
-
-        <br>
-        <br>
-      </div>
-    </div>
-    </div>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<script type="text/javascript">
 
 function updateConfidenceIntervals() {
   if (Window.confidenceIntervalsCheckbox) { // If it's already checked, uncheck it
@@ -404,17 +83,6 @@ function se95(p, n) {
 }
 
 var bisectDate = d3.bisector(function(d){return d.x}).left;
-
-var width = 800,
-  height = 600;
-
-var margin = {
-    'top': 0,
-    'right': 60,
-    'bottom': 60,
-    'left': 60
-};
-
 var svg = d3.selectAll("#content")
   .append("svg")
   .attr("width", width)
@@ -434,11 +102,11 @@ var r = d3.scaleLinear().domain([maxGamesRemaining, minGamesRemaining]).range([m
 // Legends
 var bronzegoldbox = d3.selectAll("div#bronzegoldbox").append("svg").attr("width", 80).attr("height", 15).style("background", "rgba(0, 100, 250, .4)");
 
-bronzegoldbox.append("line").attr("id", "theline").attr("x1", 1).attr("x2", 80).attr("y1", 7).attr("y2", 7).style("stroke-width", "2px").attr("stroke", "blue");
+bronzegoldbox.append("line").attr("id", "bronzegoldline").attr("x1", 1).attr("x2", 80).attr("y1", 7).attr("y2", 7).style("stroke-width", "2px").attr("stroke", "blue");
 
 var platniumbox = d3.selectAll("div#platniumbox").append("svg").attr("width", 80).attr("height", 15).style("background", "rgba(150, 0, 50, 0.3");
 
-platniumbox.append("line").attr("id", "theline").attr("x1", 1).attr("x2", 80).attr("y1", 7).attr("y2", 7).style("stroke-width", "2px").attr("stroke", "orange");
+platniumbox.append("line").attr("id", "platniumline").attr("x1", 1).attr("x2", 80).attr("y1", 7).attr("y2", 7).style("stroke-width", "2px").attr("stroke", "orange");
 
 var gamesremainingbronzegoldbox = d3.selectAll("div#gamesremainingbronzegold").append("svg").attr("width", 80).attr("height", 15)
 
@@ -808,7 +476,7 @@ function somethingChanged() {
 
 
 $( document ).ready(function() {
-  d3.dsv(",", "static/IWR_w_CI.csv", function(d) { // Read the csv
+  d3.dsv(",", WHERE_IWR_w_CSV_LIVES, function(d) { // Read the csv
   return d;
 }).then(function(data) { 
 
@@ -867,74 +535,12 @@ $( document ).ready(function() {
   Window.confidenceIntervalsCheckbox = false;
   Window.bronzeGoldMouseover = false;
   d3.selectAll("path.domain").style("stroke-width", "1px")
-
+  d3.selectAll("#gamesremainingbronzegold").selectAll("g").remove();
+  d3.selectAll("#gamesremainingplatnium").selectAll("g").remove();
+  d3.selectAll("#bronzegoldbox").selectAll("g").remove();
+  d3.selectAll("#platniumbox").selectAll("g").remove();
 
 })
 
 
 
-
-
-</script>
-</body>
-<style type="text/css">
-
-  .legend-and-fun-fact-wrapper {
-    border: 1px solid #a19da8; 
-    border-radius: 7px; 
-    background-color: #f8f8f8
-  }
-
-  p.radio-labels {
-    font-family: radnika-semibold;
-    margin-left: -20px;
-  }
-
-  .axis-labels {
-    font-family: radnika-bold;
-    font-size: 18px;
-  }
-
-  p.games-remaining-legend-text {
-    font-family: radnika-medium;
-    font-size: 10px;
-    text-align: right;
-  }
-
-  p.winrate-legend-text {
-    font-family: radnika-medium;
-    font-size: 10px;
-    text-align: right;
-  }
-
-  polygon.champ-select-arrows {
-    stroke:purple;
-    stroke-width:1;
-  }
-
-  div.content-wrapper {
-    margin-top: 12px;
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</style>
-</html>
