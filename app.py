@@ -13,11 +13,10 @@ def index():
 def mobile():
 	return render_template("winrate-mobile.html")
 
-@app.route("/test", methods=["POST"])
-@cross_origin(origin="*")
-def test():
+@app.route("/mobile", methods=["POST"])
+def mobile():
 	if request.method = "POST":
-		print("Posted")
+		print(request.json)
 
 
 if __name__ == "__main__":
