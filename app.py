@@ -1,10 +1,9 @@
 from flask import Flask, render_template, send_from_directory, request
-from flask_cors import CORS, cross_origin
 import pymysql
 import datetime
 
 app = Flask(__name__, static_folder='static')
-CORS(app)
+
 app.config['CORS_HEADERS'] = 'application/json'
 
 @app.route("/", methods=["GET"])
