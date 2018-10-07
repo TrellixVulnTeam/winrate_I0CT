@@ -2,7 +2,7 @@
 
 var WHERE_IWR_w_CSV_LIVES = "static/IWR_w_CI.csv";
 
-var width = 350;
+var width = 340;
 var height = 220;
 
 var margin = {
@@ -364,30 +364,30 @@ function somethingChanged() {
   }
 
 
-  var hoverline = g.append("g")
-    .append("line")
-    .attr("x1", x(15))
-    .attr("x2", x(15))
-    .attr("y1", y(0.40))
-    .attr("y2", y(0.40))
-    .style("stroke-width", "2px")
-    .style("stroke", "black")
-    .style("display", "none");
+  // var hoverline = g.append("g")
+  //   .append("line")
+  //   .attr("x1", x(15))
+  //   .attr("x2", x(15))
+  //   .attr("y1", y(0.40))
+  //   .attr("y2", y(0.40))
+  //   .style("stroke-width", "2px")
+  //   .style("stroke", "black")
+  //   .style("display", "none");
 
-  var hoverdotwinrate = g.append("g")
-    .append("circle")
-    .attr("r", 0)
-    .attr("cx", x(15))
-    .attr("cy", y(0.5))
-    .attr("stroke", "blue")
-    .attr("fill", "blue");
+  // var hoverdotwinrate = g.append("g")
+  //   .append("circle")
+  //   .attr("r", 0)
+  //   .attr("cx", x(15))
+  //   .attr("cy", y(0.5))
+  //   .attr("stroke", "blue")
+  //   .attr("fill", "blue");
 
-  var hoverdotsamplesize = g.append("g")
-    .append("circle")
-    .attr("r", 0)
-    .attr("cx", x(15))
-    .attr("cy", y(0.5))
-    .attr("stroke", "blue");
+  // var hoverdotsamplesize = g.append("g")
+  //   .append("circle")
+  //   .attr("r", 0)
+  //   .attr("cx", x(15))
+  //   .attr("cy", y(0.5))
+  //   .attr("stroke", "blue");
 
 
 

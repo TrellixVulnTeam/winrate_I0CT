@@ -77,19 +77,18 @@
       <div class="col-9 champ-switcher">
         <div id="champ-switcher">
           <div class="row">
-            <div class="col-5"></div>
-            <div class="col-3" style="text-align: center;">
-              <p style="float: center;">Select a champion</p>
+            <div class="col-4"></div>
+            <div class="col-4" style="text-align: center;">
+              <p style="text-align: : center;">Select a champion</p>
             </div>
             <div class="col-4"></div>
           </div>
-
+          
           <div class="row">
             <div class="col-3"></div>
             
-            <div class="col-1">
-              <!-- <button onclick="previousChampion();" style="float: right;"><p>Hey</p></button> -->
-              <svg width="18" height="18" style="float: right; margin-right: -18px;">
+            <div class="col-1" style="text-align: center;">
+              <svg width="18" height="18" style="display: block; margin: auto; margin-right: -20px;">
                 <g>
                   <polygon points="18,0 18,18 0,9" class="champ-select-arrows" id="left-arrow" onclick="previousChampion();"/>
                   <rect class="btn" x="0" y="0" width="18" height="18" onclick="previousChampion();" style="fill: rgba(0,0,0,0);"></rect>
@@ -97,12 +96,12 @@
               </svg>
             </div>
 
-            <div class="col-4">
+            <div class="col-4" style="text-align: center;"> 
               <input id="myinput" class="current-champion" value="Aatrox" style="text-align: center; float: center;"/>
             </div>
 
             <div class="col-1">
-              <svg width="18" height="18" style="float: right; margin-right: 18px;">
+              <svg width="18" height="18" style="display: block; margin: auto; margin-left: -20px !important;">
                 <g>
                   <polygon points="0,0 0,18 18,9" class="champ-select-arrows" id="right-arrow"onclick="previousChampion();"/>
                   <rect class="btn" x="0" y="0" width="18" height="18" onclick="nextChampion();" style="fill: rgba(0,0,0,0);"></rect>
@@ -137,7 +136,41 @@
             </div>
         </div>
 
-        <br><br><br><br><br>
+        <br>
+
+        <div class="row">
+          <div class="col-2">
+          <div class="checkbox">
+            <svg width="18" height="18">
+              <g>
+                <!-- <rect id="bronze-gold-mouseover" class="btn" x="0" y="0" width="18" height="18" onclick="bronzeGoldMouseover();" style="fill: rgba(150,0,150,.3);"></rect> -->
+                <circle id="bronze-gold-mouseover" cx="9" cy="9" r="8" onclick="bronzeGoldMouseover();" style="fill: rgba(150,0,150,0); stroke: rgba(150,0,150, 1);"></circle>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="col-10">
+          <p class="radio-labels">Mouseover on Bronze-Gold Tier</p>
+        </div>
+      </div>
+
+      <div class="row">
+          <div class="col-2">
+          <div class="checkbox">
+            <svg width="18" height="18">
+              <g>
+                <!-- <rect id="platinum-plus-mouseover" class="btn" x="0" y="0" width="18" height="18" onclick="platinumPlusMouseover();" style="fill: rgba(150,0,150,.3);"></rect> -->
+                <circle id="platinum-plus-mouseover" cx="9" cy="9" r="8" onclick="platinumPlusMouseover();" style="fill: rgba(150,0,150,0); stroke: rgba(150,0,150, 1);"></circle>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="col-10">
+          <p class="radio-labels">Mouseover on Platinum+ Tier</p>
+        </div>
+      </div>
+
+      <br><br>
 
         <div class="row">
           <div class="col-2">
@@ -167,21 +200,6 @@
         </div>
         <div class="col-10">
           <p class="radio-labels">Show sample size</p>
-        </div>
-      </div>
-
-      <div class="row">
-          <div class="col-2">
-          <div class="checkbox">
-            <svg width="18" height="18">
-              <g>
-                <rect id="which-tier-to-toggle-mouseover" class="btn" x="0" y="0" width="18" height="18" onclick="toggleMouseoverTier();" style="fill: rgba(150,0,150,.3);"></rect>
-              </g>
-            </svg>
-          </div>
-        </div>
-        <div class="col-10">
-          <p class="radio-labels">Mouseover on Bronze-Gold Tier</p>
         </div>
       </div>
 

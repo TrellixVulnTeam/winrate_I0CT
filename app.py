@@ -15,7 +15,7 @@ def index():
 def mobile():
 	return render_template("winrate-mobile.html")
 
-@app.route("/test", methods=["POST"])
+
 @cross_origin(origin="*")
 def test():
 	if request.method == "POST":

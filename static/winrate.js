@@ -39,18 +39,23 @@ function updateSampleSize() {
   somethingChanged();
 }
 
-function toggleMouseoverTier() {
-  if (Window.bronzeGoldMouseover) { 
-    Window.bronzeGoldMouseover = false;
-    d3.selectAll("#which-tier-to-toggle-mouseover").style("fill", "rgba(150, 0, 150, .3)");
-  }
-  else { 
-    Window.bronzeGoldMouseover = true;
-    d3.selectAll("#which-tier-to-toggle-mouseover").style("fill", "rgba(150, 0, 150, 1)");
-  }
+function bronzeGoldMouseover() {
+  // Tick self
+  d3.selectAll("#bronze-gold-mouseover").style("fill", "rgba(150, 0, 150, 1)");
+  // Untick other
+  d3.selectAll("#platinum-plus-mouseover").style("fill", "rgba(150, 0, 150, 0)");
+  Window.bronzeGoldMouseover = true;
   somethingChanged();
 }
 
+function platinumPlusMouseover() {
+  // Tick self
+  d3.selectAll("#bronze-gold-mouseover").style("fill", "rgba(150, 0, 150, 0)");
+  // Untick other
+  d3.selectAll("#platinum-plus-mouseover").style("fill", "rgba(150, 0, 150, 1)");
+  Window.bronzeGoldMouseover = false;
+  somethingChanged();
+}
 
 
 
@@ -379,15 +384,31 @@ function somethingChanged() {
     .attr("r", 0)
     .attr("cx", x(15))
     .attr("cy", y(0.5))
-    .attr("stroke", "blue")
-    .attr("fill", "blue");
+  
 
   var hoverdotsamplesize = g.append("g")
     .append("circle")
     .attr("r", 0)
     .attr("cx", x(15))
     .attr("cy", y(0.5))
-    .attr("stroke", "blue");
+
+
+  if (Window.bronzeGoldMouseover) {
+    hoverdotwinrate
+    .attr("stroke", "blue")
+    .attr("fill", "blue");
+    hoverdotsamplesize
+      .attr("stroke", "blue")
+      .attr("fill", "blue");
+  }
+  else {
+    hoverdotwinrate
+    .attr("stroke", "orange")
+    .style("fill", "orange");
+    hoverdotsamplesize
+      .attr("stroke", "orange")
+      .style("fill", "orange");
+  }
 
 
 
