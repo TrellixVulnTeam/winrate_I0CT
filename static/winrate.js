@@ -551,7 +551,7 @@ $( document ).ready(function() {
     })
 
   })
-  
+
   Window.sampleSizeCheckbox = false;
   Window.confidenceIntervalsCheckbox = false;
   Window.bronzeGoldMouseover = false;
@@ -560,7 +560,7 @@ $( document ).ready(function() {
   d3.selectAll("#gamesremainingplatnium").selectAll("g").remove();
   d3.selectAll("#bronzegoldbox").selectAll("g").remove();
   d3.selectAll("#platniumbox").selectAll("g").remove();
-
+  platinumPlusMouseover();
 })
 
 

@@ -55,9 +55,11 @@
         </div>
       </div>
     </nav>
-
-
     <br><br><br><br>
+    
+    <!-- If big -->
+    <!-- If small -->
+
     <!-- HEADLINE START -->
     <div class="row">
       <div class="col-12">
@@ -72,7 +74,12 @@
     <br><br>
 
 
+    <div class="row d-block d-xl-none">
+    </div>
 
+    <div class="row d-none d-md-block">
+    </div>
+    
     <div class="row">
       <div class="col-9 champ-switcher">
         <div id="champ-switcher">
@@ -129,13 +136,13 @@
 
       <!-- FUN FACT AND LEGEND START -->
       <div class="col-3">
+        <div class="row d-none d-xl-block">
+          <div class="row col-12">
+              <div class="legend-and-fun-fact-wrapper" style="margin-top: 8px; height: 80px;">
+                <p id="fun-fact" style="padding: 15px; font-family: radnika-semibold; margin-bottom: -1px;">Generic text for Lisa</p>
+              </div>
+          </div>
         
-        <div class="row col-12">
-            <div class="legend-and-fun-fact-wrapper" style="margin-top: 8px; height: 80px;">
-              <p id="fun-fact" style="padding: 15px; font-family: radnika-semibold; margin-bottom: -1px;">Generic text for Lisa</p>
-            </div>
-        </div>
-
         <br>
 
         <div class="row">
@@ -249,7 +256,7 @@
           </div>    
         </div>
       </div>
-
+      </div>
 
 
 
@@ -259,11 +266,146 @@
 
 
     </div>
-
-
-
-
+    <div class="row d-block d-xl-none">
+      <div class="row col-12">
+        <div class="legend-and-fun-fact-wrapper" style="margin-top: 8px; height: 80px;">
+          <p id="fun-fact" style="padding: 15px; font-family: radnika-semibold; margin-bottom: -1px;">Generic text for Lisa</p>
+        </div>
       </div>
+
+      <div class="row">
+        <div class="col-4">
+          <div class="row">
+          <div class="col-2">
+          <div class="checkbox">
+            <svg width="18" height="18">
+              <g>
+                <!-- <rect id="bronze-gold-mouseover" class="btn" x="0" y="0" width="18" height="18" onclick="bronzeGoldMouseover();" style="fill: rgba(150,0,150,.3);"></rect> -->
+                <circle id="bronze-gold-mouseover" cx="9" cy="9" r="8" onclick="bronzeGoldMouseover();" style="fill: rgba(150,0,150,0); stroke: rgba(150,0,150, 1);"></circle>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+
+            <div class="col-8">
+              <p class="radio-labels">Mouseover on Bronze-Gold Tier</p>
+            </div>
+          </div>
+
+          <div class="row">
+          <div class="col-2">
+          <div class="checkbox">
+            <svg width="18" height="18">
+              <g>
+                <!-- <rect id="platinum-plus-mouseover" class="btn" x="0" y="0" width="18" height="18" onclick="platinumPlusMouseover();" style="fill: rgba(150,0,150,.3);"></rect> -->
+                <circle id="platinum-plus-mouseover" cx="9" cy="9" r="8" onclick="platinumPlusMouseover();" style="fill: rgba(150,0,150,0); stroke: rgba(150,0,150, 1);"></circle>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="col-10">
+          <p class="radio-labels">Mouseover on Platinum+ Tier</p>
+        </div>
+      </div>
+
+        </div>
+        <div class="col-4">
+          <div class="row">
+          <div class="col-2">
+            <div class="checkbox">
+              <svg width="18" height="18">
+                <g>
+                  <rect id="confidence-interval-checkbox" class="btn" x="0" y="0" width="18" height="18" onclick="updateConfidenceIntervals();" style="fill: rgba(150,0,150,.3);"></rect>
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div class="col-10">
+            <p class="radio-labels">Show confidence intervals</p>
+          </div>
+        </div>
+
+
+      <div class="row">
+          <div class="col-2">
+          <div class="checkbox">
+            <svg width="18" height="18">
+              <g>
+                <rect id="sample-size-checkbox" class="btn" x="0" y="0" width="18" height="18" onclick="updateSampleSize();" style="fill: rgba(150,0,150,.3);"></rect>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="col-10">
+          <p class="radio-labels">Show sample size</p>
+        </div>
+      </div>
+
+        </div>
+        <div class="col-4">
+          <div class="row">
+        <div class="col-12">
+          <div class="legend-and-fun-fact-wrapper">
+            <div class="row" style="padding-top: 17px;">
+              <div class="col-6"><p class="winrate-legend-text">Bronze - Gold</p></div>
+              <div class="col-6"><div id="bronzegoldbox"></div></div>
+            </div>
+            <div class="row">
+              <div class="col-6"><p class="winrate-legend-text">Platinum +</p></div>
+              <div class="col-6"><div id="platniumbox"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="legend-and-fun-fact-wrapper">
+            <div class="row">
+              <div class="col-12">
+                <p style="text-align: center;">Games remaining</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6"><p class="games-remaining-legend-text">Bronze - Gold</p></div>
+              <div class="col-6"><div id="gamesremainingbronzegold"></div></div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-6"><p class="games-remaining-legend-text">Platinum +</p></div>
+                  <div class="col-6"><div id="gamesremainingplatnium"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>    
+        </div>
+      </div>
+        </div>
+      </div>
+
+      
+
+      <br><br>
+
+        
+
+
+      <br><br><br><br><br>
+
+      
+
+
+      <br><br>
+
+
+      
+    </div>
+
+
+
+
+</div>
 
 
 
