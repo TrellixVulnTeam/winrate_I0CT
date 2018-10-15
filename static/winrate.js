@@ -59,7 +59,6 @@ function platinumPlusMouseover() {
 
 
 
-
 function nextChampion() {
   if (Window.champidx == Window.champions.length-1) {
     console.log("");
@@ -547,7 +546,10 @@ $( document ).ready(function() {
 
   $("#myinput").on('awesomplete-selectcomplete', function(){
     somethingChanged();
-    console.log(document.getElementById("myinput").value);
+    // Update window.champIdx
+   var currentChampion = document.getElementById("myinput").value;
+    Window.champidx = Window.champions.indexOf(currentChampion);
+   console.log(document.getElementById("myinput").value);
     })
 
   })
